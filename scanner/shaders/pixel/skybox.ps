@@ -1,0 +1,50 @@
+Texture2D perturb : register(t0);
+Texture2D clouds : register(t1);
+
+SamplerState sample_type;
+
+cbuffer ColorBuffer
+{
+    float4 apex_color;
+    float4 center_color;
+};
+
+cbuffer SkyBuffer
+{
+    float translation;
+    float brightness;
+};
+
+//========
+//Typedefs
+struct PIXEL_INPUT_TYPE
+{
+    float4 position : SV_POSITION;
+    float2 tex : TEXCOORD0;
+    float4 skybox_position : TEXCOORD1;
+};
+
+
+//===========
+//Pixelshader
+float4 Skybox_pixel_shader(PIXEL_INPUT_TYPE input) : SV_TARGET
+{
+    float4 perturb_color;
+    float4 cloud_color;
+    float height;
+    float4 output_color;
+
+    height = input.skybox_position.y;
+    if(height < 0.0)
+        height = 0.0f;
+    
+    output_color = lerp(center_color, apex_color, height);
+
+    perturb_color = perturb.Sample(sample_type, input.tex);
+    perturb_color.xy = perturb_color.xy + input.tex.xy + translation / 100.0f - 0.5f;
+	
+    cloud_color = clouds.Sample(sample_type, perturb_color.xy);
+    output_color = saturate(cloud_color * (brightness + 0.2) + output_color * brightness);
+ 
+    return output_color;
+}

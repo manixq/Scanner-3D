@@ -1,0 +1,79 @@
+//=======
+//Globals
+Texture2D shader_texture : register(t0);
+Texture2D depth_map_texture : register(t1);
+
+SamplerState sample_type_clamp : register(s0);
+SamplerState sample_type_wrap : register(s1);
+
+cbuffer light_buffer
+{
+    float4 ambient_color;
+    float4 diffuse_color;
+    float3 light_direction;
+    float padding;
+};
+
+//========
+//TypeDefs
+struct PIXEL_INPUT_TYPE
+{
+    float4 position : SV_POSITION;
+    float2 tex : TEXCOORD0;
+    float3 normal : NORMAL;
+    float4 light_view_position : TEXCOORD1;
+};
+
+//===========
+//PixelShader
+float4 Shadow_pixel_shader(PIXEL_INPUT_TYPE input) : SV_TARGET
+{
+    float4 texture_color;
+    float4 color;
+    float3 light_dir;
+    float2 project_tex_coord;
+    float depth_value;
+    float light_depth_value;
+    float bias;
+    float light_intensity;
+    
+    bias = 0.001f;
+    color = ambient_color;
+    light_dir = -light_direction;
+
+    //get projected tex coords and check if coords are in view of light
+    project_tex_coord.x = input.light_view_position.x / input.light_view_position.w / 2.0f + 0.5f;
+    project_tex_coord.y = -input.light_view_position.y / input.light_view_position.w / 2.0f + 0.5f;
+    if((saturate(project_tex_coord.x) == project_tex_coord.x) && (saturate(project_tex_coord.y) == project_tex_coord.y))
+    {
+        depth_value = depth_map_texture.Sample(sample_type_clamp, project_tex_coord).r;
+        light_depth_value = input.light_view_position.z / 50.0f;
+        light_depth_value = light_depth_value - bias;        
+        if (light_depth_value >= depth_value)
+        {
+           // color += 1;
+            light_intensity = saturate(dot(input.normal, light_dir));
+            if(light_intensity > 0.0f)
+            {
+                color += (diffuse_color * light_intensity);
+                color = saturate(color);
+            }
+        }
+    }
+    else
+    {
+        //color += 1;
+        light_intensity = saturate(dot(input.normal, light_dir));
+        if(light_intensity > 0.0)
+        {
+            color += (diffuse_color * light_intensity);
+            color = saturate(color);
+        }
+    } 
+
+    //sample pixel color from the texture using the sampler at this texture coord loc
+    texture_color = shader_texture.Sample(sample_type_wrap, input.tex);
+   
+    color = color * texture_color;
+    return color;
+}

@@ -1,0 +1,46 @@
+//=======
+//Globals
+Texture2D shader_texture : register(t0);
+Texture2D normal_texture : register(t1);
+
+SamplerState sample_type_wrap : register(s0);
+
+//========
+//TypeDefs
+struct PIXEL_INPUT_TYPE
+{
+    float4 position : SV_POSITION;
+    float2 tex : TEXCOORD0;
+
+    float3 normal : NORMAL;
+    float3 tangent : TANGENT;
+    float3 binormal : BINORMAL;
+};
+
+struct PIXEL_OUTPUT_TYPE
+{
+    float4 color : SV_Target0;
+    float4 normal_texture : SV_Target1;
+
+};
+//===========
+//PixelShader
+PIXEL_OUTPUT_TYPE Deferred_pixel_shader(PIXEL_INPUT_TYPE input) : SV_TARGET
+{
+    PIXEL_OUTPUT_TYPE output;    
+    float3 normal;
+    float4 normal_map;
+
+    //sample pixel color from texture
+    output.color = shader_texture.Sample(sample_type_wrap, input.tex);
+    normal_map = normal_texture.Sample(sample_type_wrap, input.tex);
+
+    normal_map = (normal_map * 2.0f) - 1.0f;
+    normal = (normal_map.x * input.tangent) + (normal_map.y * input.binormal) + (normal_map.z * input.normal);
+    normal = normalize(normal);
+    normal = (normal + 1.0f) / 2;
+    output.normal_texture = (float4) (normal, 1.0f);    
+
+    return output;
+};
+
