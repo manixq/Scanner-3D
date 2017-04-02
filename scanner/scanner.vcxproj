@@ -156,6 +156,7 @@
     <ClCompile Include="d3d_class.cpp" />
     <ClCompile Include="debug_window_class.cpp" />
     <ClCompile Include="deferred_buffers_class.cpp" />
+    <ClCompile Include="depth_fusion_class.cpp" />
     <ClCompile Include="font_class.cpp" />
     <ClCompile Include="font_shader_class.cpp" />
     <ClCompile Include="fps_class.cpp" />
@@ -187,6 +188,7 @@
     <ClInclude Include="headers\d3d_class.h" />
     <ClInclude Include="headers\debug_window_class.h" />
     <ClInclude Include="headers\deferred_buffers_class.h" />
+    <ClInclude Include="headers\depth_fusion_class.h" />
     <ClInclude Include="headers\font_class.h" />
     <ClInclude Include="headers\font_shader_class.h" />
     <ClInclude Include="headers\fps_class.h" />

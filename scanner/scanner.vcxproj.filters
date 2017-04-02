@@ -111,6 +111,9 @@
     <ClCompile Include="deferred_buffers_class.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="depth_fusion_class.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="headers\bitmap_class.h">
@@ -192,6 +195,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="headers\deferred_buffers_class.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\depth_fusion_class.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

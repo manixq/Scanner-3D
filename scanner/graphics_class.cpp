@@ -102,12 +102,25 @@ bool GraphicsClass::Initialize(int screen_width, int screen_height, HWND hwnd)
     if (!result)
         return false;
 
+    object_2d3d_ = new DepthFusionClass;
+    if (!object_2d3d_)
+        return false;
+    result = object_2d3d_->Initialize(d3d_->GetDevice(), "data/depth_fusion/disp.bmp", "data/depth_fusion/view.bmp");
+    if (!result)
+    {
+        MessageBox(hwnd, L"Could not initialize object_2d3d.", L"Error", MB_OK);
+        return false;
+    }
+
     terrain_ = new TerrainClass;
     if (!terrain_)
         return false;
     result = terrain_->Initialize(d3d_->GetDevice(), "data/setup.txt");
     if (!result)
+    {
+        MessageBox(hwnd, L"Could not initialize terrain object.", L"Error", MB_OK);
         return false;
+    }
             
     //create camera object
     camera_ = new CameraClass;
@@ -212,6 +225,13 @@ bool GraphicsClass::Initialize(int screen_width, int screen_height, HWND hwnd)
 //kill all graphics objects
 void GraphicsClass::Shutdown()
 {
+    if(object_2d3d_)
+    {
+        object_2d3d_->Shutdown();
+        delete object_2d3d_;
+        object_2d3d_ = nullptr;
+    }
+
     if(deferred_buffers_)
     {
         deferred_buffers_->Shutdown();
@@ -421,6 +441,11 @@ bool GraphicsClass::Render_scene()
         }
     }
     d3d_->GetWorldMatrix(world_matrix);
+
+    object_2d3d_->Render(d3d_->GetDeviceContext());
+    result = shader_manager_->Render_texture_shader(d3d_->GetDeviceContext(), object_2d3d_->Get_index_count(), world_matrix, view_matrix, projection_matrix, texture_manager_->Get_texture(0));
+    if (!result)
+        return false;
 
     d3d_->GetWorldMatrix(world_matrix);
     d3d_->Set_back_buffer_render_target();

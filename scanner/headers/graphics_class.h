@@ -17,10 +17,11 @@
 #include "headers/shader_manager_class.h"
 #include "headers/skybox_class.h"
 #include "headers/deferred_buffers_class.h"
+#include "headers/depth_fusion_class.h"
 
 //=======
 //globals
-static bool FULL_SCREEN = true;
+static bool FULL_SCREEN = false;
 const bool VSYNC_ENABLED = true;
 const float SCREEN_DEPTH = 500.0f;
 const float SCREEN_NEAR = 0.1f;
@@ -55,6 +56,7 @@ private:
     LightClass* light_;
     SkyBoxClass* skybox_; 
     DeferredBuffersClass* deferred_buffers_;
+    DepthFusionClass* object_2d3d_;
 
     TerrainClass* terrain_;
     TextClass* text_;
