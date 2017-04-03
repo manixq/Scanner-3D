@@ -152,6 +152,7 @@
   <ItemGroup>
     <ClCompile Include="bitmap_class.cpp" />
     <ClCompile Include="camera_class.cpp" />
+    <ClCompile Include="color_shader_class.cpp" />
     <ClCompile Include="cpu_class.cpp" />
     <ClCompile Include="d3d_class.cpp" />
     <ClCompile Include="debug_window_class.cpp" />
@@ -184,6 +185,7 @@
   <ItemGroup>
     <ClInclude Include="headers\bitmap_class.h" />
     <ClInclude Include="headers\camera_class.h" />
+    <ClInclude Include="headers\color_shader_class.h" />
     <ClInclude Include="headers\cpu_class.h" />
     <ClInclude Include="headers\d3d_class.h" />
     <ClInclude Include="headers\debug_window_class.h" />
@@ -212,12 +214,14 @@
     <ClInclude Include="headers\timer_class.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="shaders\pixel\color.ps" />
     <None Include="shaders\pixel\deferred.ps" />
     <None Include="shaders\pixel\font.ps" />
     <None Include="shaders\pixel\shadow.ps" />
     <None Include="shaders\pixel\skybox.ps" />
     <None Include="shaders\pixel\terrain.ps" />
     <None Include="shaders\pixel\texture.ps" />
+    <None Include="shaders\vertex\color.vs" />
     <None Include="shaders\vertex\deferred.vs" />
     <None Include="shaders\vertex\font.vs" />
     <None Include="shaders\vertex\shadow.vs" />

@@ -114,6 +114,9 @@
     <ClCompile Include="depth_fusion_class.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="color_shader_class.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="headers\bitmap_class.h">
@@ -200,6 +203,9 @@
     <ClInclude Include="headers\depth_fusion_class.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="headers\color_shader_class.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\pixel\deferred.ps">
@@ -236,6 +242,12 @@
       <Filter>Resource Files\shaders\vertex</Filter>
     </None>
     <None Include="shaders\vertex\texture.vs">
+      <Filter>Resource Files\shaders\vertex</Filter>
+    </None>
+    <None Include="shaders\pixel\color.ps">
+      <Filter>Resource Files\shaders\pixel</Filter>
+    </None>
+    <None Include="shaders\vertex\color.vs">
       <Filter>Resource Files\shaders\vertex</Filter>
     </None>
   </ItemGroup>

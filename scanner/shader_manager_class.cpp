@@ -6,6 +6,7 @@ ShaderManagerClass::ShaderManagerClass()
     terrain_shader_ = nullptr;
     texture_shader_ = nullptr;
     skybox_shader_ = nullptr;
+    color_shader_ = nullptr;
 }
 
 ShaderManagerClass::ShaderManagerClass(const ShaderManagerClass&)
@@ -21,6 +22,17 @@ ShaderManagerClass::~ShaderManagerClass()
 bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 {
     bool result;
+
+    //Color Shader
+    color_shader_ = new ColorShaderClass;
+    if (!color_shader_)
+        return false;
+    result = color_shader_->Initialize(device, hwnd);
+    if (!result)
+    {
+        MessageBox(hwnd, L"Could not initialize color shader.", L"Error", MB_OK);
+        return false;
+    }
 
     //Skybox Shader
     skybox_shader_ = new SkyboxShaderClass;
@@ -70,6 +82,13 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 
 void ShaderManagerClass::Shutdown()
 {
+    if (color_shader_)
+    {
+        color_shader_->Shutdown();
+        delete color_shader_;
+        color_shader_ = nullptr;
+    }
+
     if (skybox_shader_)
     {
         skybox_shader_->Shutdown();
@@ -129,6 +148,15 @@ bool ShaderManagerClass::Render_texture_shader(ID3D11DeviceContext* device, int 
 {
     bool result;
     result = texture_shader_->Render(device, index_count, world, view, projection, texture);
+    if (!result)
+        return false;
+    return true;
+}
+
+bool ShaderManagerClass::Render_color_shader(ID3D11DeviceContext* device, int index_count, D3DXMATRIX world, D3DXMATRIX view, D3DXMATRIX projection)
+{
+    bool result;
+    result = color_shader_->Render(device, index_count, world, view, projection);
     if (!result)
         return false;
     return true;

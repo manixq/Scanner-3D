@@ -1,0 +1,15 @@
+//========
+//Typedefs
+struct PIXEL_INPUT_TYPE
+{
+    float4 position : SV_POSITION;
+    float4 color : COLOR;
+};
+
+//===========
+//Pixelshader
+float4 Color_pixel_shader(PIXEL_INPUT_TYPE input) : SV_TARGET
+{
+    
+    return input.color;
+}

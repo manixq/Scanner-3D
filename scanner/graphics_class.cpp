@@ -443,11 +443,11 @@ bool GraphicsClass::Render_scene()
     d3d_->GetWorldMatrix(world_matrix);
 
     object_2d3d_->Render(d3d_->GetDeviceContext());
-    result = shader_manager_->Render_texture_shader(d3d_->GetDeviceContext(), object_2d3d_->Get_index_count(), world_matrix, view_matrix, projection_matrix, texture_manager_->Get_texture(0));
+    result = shader_manager_->Render_color_shader(d3d_->GetDeviceContext(), object_2d3d_->Get_index_count(), world_matrix, view_matrix, projection_matrix);
     if (!result)
         return false;
-
     d3d_->GetWorldMatrix(world_matrix);
+
     d3d_->Set_back_buffer_render_target();
 
     return true;

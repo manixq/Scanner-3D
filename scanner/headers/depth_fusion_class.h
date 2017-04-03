@@ -18,10 +18,6 @@ class DepthFusionClass
     struct VERTEX_TYPE
     {
         XMFLOAT3 position;
-        XMFLOAT2 texture;
-        XMFLOAT3 normal;
-        XMFLOAT3 tangent;
-        XMFLOAT3 binormal;
         XMFLOAT3 color;
     };
 
@@ -29,17 +25,12 @@ class DepthFusionClass
     struct DEPTH_MAP_TYPE
     {
         float x, y, z;
-        float nx, ny, nz;
         float r, g, b;
     };
 
     struct MODEL_TYPE
     {
         float x, y, z;
-        float tu, tv;
-        float nx, ny, nz;
-        float tx, ty, tz;
-        float bx, by, bz;
         float r, g, b;
     };
 
