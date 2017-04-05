@@ -80,8 +80,8 @@ bool DepthFusionClass::Load_bitmap_depth_map()
     unsigned char depth;
 
     //TODO: read width/height from file
-    model_width_ = 450;
-    model_height_ = 375;
+    model_width_ = 1025;
+    model_height_ = 1025;
 
     depth_map_ = new DEPTH_MAP_TYPE[model_width_* model_height_];
     if (!depth_map_)
@@ -124,7 +124,7 @@ bool DepthFusionClass::Load_bitmap_depth_map()
         {
             index = (model_width_ * (model_height_ - 1 - j)) + i;
             depth = bitmap_image[k];
-            depth_map_[index].z = (float)depth / 10;
+            depth_map_[index].z = (float)depth;
             k += 3;
         }
         k++;
@@ -215,10 +215,10 @@ void DepthFusionClass::Set_coordinates()
         {
             index = (model_width_ * j) + i;
 
-            depth_map_[index].x = -(float)i / 10;
-            depth_map_[index].y = -(float)j / 10;
-            depth_map_[index].y += 60;
-            depth_map_[index].z /= 2;
+            depth_map_[index].x = -(float)i / 50;
+            depth_map_[index].y = -(float)j / 50;
+            depth_map_[index].y += 50;
+            depth_map_[index].z /= 10;
             depth_map_[index].z -= 20;
         }
     }
@@ -362,8 +362,8 @@ bool DepthFusionClass::Build_model()
             model_[index].x = depth_map_[index1].x;
             model_[index].y = depth_map_[index1].y;
             model_[index].z = depth_map_[index1].z;
-           // model_[index].tu = tu2left;
-           // model_[index].tv = tv2top;
+            model_[index].tu = tu2left;
+            model_[index].tv = tv2top;
            // model_[index].nx = depth_map_[index1].nx;
            // model_[index].ny = depth_map_[index1].ny;
            // model_[index].nz = depth_map_[index1].nz;
@@ -375,8 +375,8 @@ bool DepthFusionClass::Build_model()
             model_[index].x = depth_map_[index2].x;
             model_[index].y = depth_map_[index2].y;
             model_[index].z = depth_map_[index2].z;
-           // model_[index].tu = tu2right;
-            //model_[index].tv = tv2top;
+            model_[index].tu = tu2right;
+            model_[index].tv = tv2top;
             //model_[index].nx = depth_map_[index2].nx;
             //model_[index].ny = depth_map_[index2].ny;
             //model_[index].nz = depth_map_[index2].nz;
@@ -388,8 +388,8 @@ bool DepthFusionClass::Build_model()
             model_[index].x = depth_map_[index3].x;
             model_[index].y = depth_map_[index3].y;
             model_[index].z = depth_map_[index3].z;
-           // model_[index].tu = tu2left;
-           // model_[index].tv = tv2bottom;
+            model_[index].tu = tu2left;
+            model_[index].tv = tv2bottom;
            // model_[index].nx = depth_map_[index3].nx;
           //  model_[index].ny = depth_map_[index3].ny;
           //  model_[index].nz = depth_map_[index3].nz;
@@ -401,8 +401,8 @@ bool DepthFusionClass::Build_model()
             model_[index].x = depth_map_[index3].x;
             model_[index].y = depth_map_[index3].y;
             model_[index].z = depth_map_[index3].z;
-           // model_[index].tu = tu2left;
-           // model_[index].tv = tv2bottom;
+            model_[index].tu = tu2left;
+            model_[index].tv = tv2bottom;
           //  model_[index].nx = depth_map_[index3].nx;
           //  model_[index].ny = depth_map_[index3].ny;
           //  model_[index].nz = depth_map_[index3].nz;
@@ -414,8 +414,8 @@ bool DepthFusionClass::Build_model()
             model_[index].x = depth_map_[index2].x;
             model_[index].y = depth_map_[index2].y;
             model_[index].z = depth_map_[index2].z;
-          //  model_[index].tu = tu2right;
-           // model_[index].tv = tv2top;
+            model_[index].tu = tu2right;
+            model_[index].tv = tv2top;
            // model_[index].nx = depth_map_[index2].nx;
            // model_[index].ny = depth_map_[index2].ny;
            // model_[index].nz = depth_map_[index2].nz;
@@ -427,17 +427,15 @@ bool DepthFusionClass::Build_model()
             model_[index].x = depth_map_[index4].x;
             model_[index].y = depth_map_[index4].y;
             model_[index].z = depth_map_[index4].z;
-           // model_[index].tu = tu2right;
-          //  model_[index].tv = tv2bottom;
+            model_[index].tu = tu2right;
+            model_[index].tv = tv2bottom;
           //  model_[index].nx = depth_map_[index4].nx;
          //   model_[index].ny = depth_map_[index4].ny;
          //   model_[index].nz = depth_map_[index4].nz;
             model_[index].r = depth_map_[index4].r;
             model_[index].g = depth_map_[index4].g;
             model_[index].b = depth_map_[index4].b;
-            index++;
-
-         
+            index++;         
         }
         
     }

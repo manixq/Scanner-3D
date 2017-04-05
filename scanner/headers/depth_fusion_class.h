@@ -32,6 +32,7 @@ class DepthFusionClass
     {
         float x, y, z;
         float r, g, b;
+        float tu, tv;
     };
 
     struct VECTOR_TYPE

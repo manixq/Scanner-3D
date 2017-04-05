@@ -9,14 +9,16 @@ cbuffer MatrixBuffer
 
 struct VERTEX_INPUT_TYPE
 {
-     float4 position : POSITION;
-     float3 color : COLOR;
+    float4 position : POSITION;
+    float3 color : COLOR;
+    float2 tex : TEXCOORD0;
 };
 
 struct PIXEL_INPUT_TYPE
 {
-     float4 position : SV_POSITION;
-     float4 color : COLOR;
+    float4 position : SV_POSITION;
+    float4 color : COLOR;
+    float2 tex : TEXCOORD0;
 };
 
 
@@ -32,6 +34,7 @@ PIXEL_INPUT_TYPE Color_vertex_shader(VERTEX_INPUT_TYPE input)
     output.position = mul(output.position, projectionMatrix);
     
     output.color = float4(input.color, 1.0f);
-    
+    output.tex = input.tex;
+
     return output;
 }

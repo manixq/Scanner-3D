@@ -258,7 +258,7 @@ bool D3DClass::Initialize(int screen_width, int screen_height, bool vsync, HWND 
  device_context_->OMSetRenderTargets(1, &render_target_view_, depth_stencil_view_);
 
  //determine how polygons ll be drawn
- raster_desc.AntialiasedLineEnable = false;
+ raster_desc.AntialiasedLineEnable = true;
  raster_desc.CullMode = D3D11_CULL_BACK;
  raster_desc.DepthBias = 0;
  raster_desc.DepthBiasClamp = 0.0f;
@@ -330,7 +330,7 @@ bool D3DClass::Initialize(int screen_width, int screen_height, bool vsync, HWND 
  ZeroMemory(&blend_state_desc, sizeof(D3D11_BLEND_DESC));
  blend_state_desc.RenderTarget[0].BlendEnable = true;
  blend_state_desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
- blend_state_desc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+ blend_state_desc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
  blend_state_desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
  blend_state_desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
  blend_state_desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;

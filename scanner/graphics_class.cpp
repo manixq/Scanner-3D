@@ -86,14 +86,15 @@ bool GraphicsClass::Initialize(int screen_width, int screen_height, HWND hwnd)
     texture_manager_ = new TextureManagerClass;
     if (!texture_manager_)
         return false;
-    result = texture_manager_->Initialize(5);
+    result = texture_manager_->Initialize(6);
     if (!result)
         return false;
     texture_manager_->Load_texture(d3d_->GetDevice(), L"data/dirt01d.dds", 0);
     texture_manager_->Load_texture(d3d_->GetDevice(), L"data/dirt01n.dds", 1);
     texture_manager_->Load_texture(d3d_->GetDevice(), L"data/distance01n.dds", 2);
     texture_manager_->Load_texture(d3d_->GetDevice(), L"data/perturb001.dds", 3);
-    texture_manager_->Load_texture(d3d_->GetDevice(), L"data/cloud001.dds", 4);        
+    texture_manager_->Load_texture(d3d_->GetDevice(), L"data/cloud001.dds", 4);
+    texture_manager_->Load_texture(d3d_->GetDevice(), L"data/depth_fusion/normal.dds", 5);
 
     skybox_ = new SkyBoxClass;
     if (!skybox_)
@@ -430,6 +431,7 @@ bool GraphicsClass::Render_scene()
     camera_->Render();
     camera_->Get_view_matrix(view_matrix);
     frustum_->ConstructFrustrum(SCREEN_DEPTH, projection_matrix, view_matrix);
+    //terrain
     for (int i = 0; i < terrain_->Get_cell_count(); i++)
     {
         result = terrain_->Render_cell(d3d_->GetDeviceContext(), i, frustum_);
@@ -442,10 +444,13 @@ bool GraphicsClass::Render_scene()
     }
     d3d_->GetWorldMatrix(world_matrix);
 
+    //depth object
+    d3d_->TurnOnAlphaBlending();
     object_2d3d_->Render(d3d_->GetDeviceContext());
-    result = shader_manager_->Render_color_shader(d3d_->GetDeviceContext(), object_2d3d_->Get_index_count(), world_matrix, view_matrix, projection_matrix);
+    result = shader_manager_->Render_color_shader(d3d_->GetDeviceContext(), object_2d3d_->Get_index_count(), world_matrix, view_matrix, projection_matrix, texture_manager_->Get_texture(5), light_dir);
     if (!result)
         return false;
+    d3d_->TurnOffAlphaBlending();
     d3d_->GetWorldMatrix(world_matrix);
 
     d3d_->Set_back_buffer_render_target();
