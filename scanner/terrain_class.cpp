@@ -684,6 +684,12 @@ void TerrainClass::Calculate_tangent_binormal(TEMP_VERTEX_TYPE vertex1, TEMP_VER
 
     length = (float)sqrt((tangent.x * tangent.x) + (tangent.y * tangent.y) + (tangent.z * tangent.z));
 
+    tangent.x = tangent.x / length;
+    tangent.y = tangent.y / length;
+    tangent.z = tangent.z / length;
+
+    length = (float)sqrt((tangent.x * tangent.x) + (tangent.y * tangent.y) + (tangent.z * tangent.z));
+
     binormal.x = binormal.x / length;
     binormal.y = binormal.y / length;
     binormal.z = binormal.z / length;

@@ -14,6 +14,10 @@ struct PIXEL_INPUT_TYPE
     float4 position : SV_POSITION;
     float4 color : COLOR;
     float2 tex : TEXCOORD0;
+    float3 normal : NORMAL;
+    float3 tangent : TANGENT;
+    float3 binormal : BINORMAL;
+    float2 tex2 : TEXCOORD1;
 };
 
 //===========
@@ -24,20 +28,23 @@ float4 Color_pixel_shader(PIXEL_INPUT_TYPE input) : SV_TARGET
     float3 light_dir;
     float light_intensity;
     float4 color;
-    
-    normals = normal_texture.Sample(sample, input.tex);    
+    float3 normal_;
+
+    //TODO: fin out why this coordinates are so bad...
+    normals = normal_texture.Sample(sample, float2(-input.tex2.y / 20, input.tex2.x));    
     light_dir = -light_direction;
     color.w = 1.0f;
 
-    normals = normalize((normals * 2.0f) - 1.0f);
-    light_intensity = saturate(dot(normals.xyz, light_dir));
+    normals = (normals * 2.0f) - 1.0f;
+    normal_ = (normals.x * input.tangent) + (normals.y * input.binormal) + (normals.z * input.normal);
+    normal_ = normalize(normal_);
+    light_intensity = saturate(dot(normal_.xyz, light_dir));
     
     if ((input.color.x + input.color.y + input.color.z) <= 0.00001f)
         color.w = 0.0f;
 
-    color.xyz = input.color.xyz * float3(0.1f, 0.1f, 0.1f);
-    if (light_intensity > 0.0f)
+    color.xyz = saturate(input.color.xyz * 0.2f);
+    if (light_intensity > 0.2f)
         color.xyz = saturate(input.color.xyz * light_intensity);
-
     return color;
 }

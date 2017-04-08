@@ -327,7 +327,7 @@ void GraphicsClass::Shutdown()
 
 bool GraphicsClass::Frame(float frame_time, float rotation_x, float rotation_y, float x_pos, float z_pos)
 {
-    static float light_angle = 270.0f;
+    static float light_angle = 0.0f;
     float radians;
     static float light_pos_x = 9.0f;
     static float frame_count = 0;
@@ -345,18 +345,18 @@ bool GraphicsClass::Frame(float frame_time, float rotation_x, float rotation_y, 
         frame_acum = 0;
     }
 
-    light_pos_x -= 0.003f * frame_time / 10;
-    light_angle -= 0.03f * frame_time / 10;
-    if (light_angle <= 90.0f)
+    light_pos_x -= 0.003f * frame_time;
+    light_angle -= 0.03f * frame_time;
+    if (light_angle > 359.0f)
     {
-        light_angle = 270.0f;
+        light_angle = 0.0f;
         light_pos_x = 9.0f;
     }
     
     radians = light_angle * 0.0174532925f;
-    light_->Set_direction(sinf(radians), cosf(radians), 0.0f);
-    light_->Set_position(light_pos_x, 15.0f, -0.1f);
-    light_->Set_look_at(-light_pos_x, 0.0f, 0.0f);
+    light_->Set_direction(sinf(radians), -0.3, cosf(radians));
+    light_->Set_position(light_pos_x, 100.0f, -0.1f);
+    light_->Set_look_at(-light_pos_x, 50.0f, 50.0f);
 
     water_translation_ += 0.001f;
     if (water_translation_ > 1.0)
@@ -443,14 +443,17 @@ bool GraphicsClass::Render_scene()
         }
     }
     d3d_->GetWorldMatrix(world_matrix);
-
+    D3DXMatrixRotationY(&world_matrix, -180);
     //depth object
     d3d_->TurnOnAlphaBlending();
+    d3d_->Turn_culling_off();
     object_2d3d_->Render(d3d_->GetDeviceContext());
     result = shader_manager_->Render_color_shader(d3d_->GetDeviceContext(), object_2d3d_->Get_index_count(), world_matrix, view_matrix, projection_matrix, texture_manager_->Get_texture(5), light_dir);
     if (!result)
         return false;
     d3d_->TurnOffAlphaBlending();
+
+    d3d_->Turn_culling_on();
     d3d_->GetWorldMatrix(world_matrix);
 
     d3d_->Set_back_buffer_render_target();

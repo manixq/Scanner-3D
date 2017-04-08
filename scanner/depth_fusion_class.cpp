@@ -37,7 +37,7 @@ bool DepthFusionClass::Initialize(ID3D11Device* device, char* depth_filename, ch
 
     result = Load_color_map();
     if (!result)
-        return false;
+        return false;    
 
     result = Build_model();
     if (!result)
@@ -50,6 +50,7 @@ bool DepthFusionClass::Initialize(ID3D11Device* device, char* depth_filename, ch
     result = Initialize_buffers(device);
     if (!result)
         return false;
+
 
     Shutdown_model();
 
@@ -215,11 +216,15 @@ void DepthFusionClass::Set_coordinates()
         {
             index = (model_width_ * j) + i;
 
-            depth_map_[index].x = -(float)i / 50;
-            depth_map_[index].y = -(float)j / 50;
-            depth_map_[index].y += 50;
-            depth_map_[index].z /= 10;
-            depth_map_[index].z -= 20;
+            depth_map_[index].x = -(float)i / 50.0f;
+            depth_map_[index].y = -(float)j / 50.0f;
+            depth_map_[index].y += 50.0f;
+            if(index > 6 && index < (model_width_ - 1) * (model_height_ - 1) + model_width_ - 1 - 6)
+            {
+               depth_map_[index].z = ((depth_map_[index - 6].z + 20.0f) * 10.0f * 0.5f + depth_map_[index].z + depth_map_[index + 6].z * 0.5f) / 2.0f;
+            }
+            depth_map_[index].z /= 10.0f;
+            depth_map_[index].z -= 20.0f;
         }
     }
 }
@@ -318,9 +323,9 @@ bool DepthFusionClass::Calculate_normals()
             length = (float)sqrt((sum[0] * sum[0]) + (sum[1] * sum[1]) + (sum[2] * sum[2]));
             index = (j * model_width_) + i;
 
-            //depth_map_[index].nx = (sum[0] / length);
-            //depth_map_[index].ny = (sum[1] / length);
-           // depth_map_[index].nz = (sum[2] / length);
+            depth_map_[index].nx = (sum[0] / length);
+            depth_map_[index].ny = (sum[1] / length);
+            depth_map_[index].nz = (sum[2] / length);
         }
     }
     delete[] normals;
@@ -340,15 +345,15 @@ bool DepthFusionClass::Build_model()
     if (!model_)
         return false;    
 
-    increment_size_width = 1 / model_width_;
-    increment_size_height = 1 / model_height_;
+    increment_size_width = 1.0f / static_cast<float>(model_height_ - 1.0f);
+    increment_size_height = 1.0f / static_cast<float>(model_width_ - 1.0f);
 
     float tu2left = 0.0f;
-    float tu2right = 1.0f;
+    float tu2right = increment_size_width;
     float tv2top = 0.0f;
-    float tv2bottom = 1.0f;
+    float tv2bottom = increment_size_height;
 
-    //triangle strip
+
     index = 0;
     for (j = 0; j < (model_height_ - 1); j++)
     {
@@ -362,82 +367,109 @@ bool DepthFusionClass::Build_model()
             model_[index].x = depth_map_[index1].x;
             model_[index].y = depth_map_[index1].y;
             model_[index].z = depth_map_[index1].z;
-            model_[index].tu = tu2left;
-            model_[index].tv = tv2top;
-           // model_[index].nx = depth_map_[index1].nx;
-           // model_[index].ny = depth_map_[index1].ny;
-           // model_[index].nz = depth_map_[index1].nz;
+            model_[index].tu = 0.0f;
+            model_[index].tv = 0.0f;
+            model_[index].nx = depth_map_[index1].nx;
+            model_[index].ny = depth_map_[index1].ny;
+            model_[index].nz = depth_map_[index1].nz;
             model_[index].r = depth_map_[index1].r;
             model_[index].g = depth_map_[index1].g;
             model_[index].b = depth_map_[index1].b;
+            model_[index].tu2 = tu2left;
+            model_[index].tv2 = tv2top;
             index++;
 
             model_[index].x = depth_map_[index2].x;
             model_[index].y = depth_map_[index2].y;
             model_[index].z = depth_map_[index2].z;
-            model_[index].tu = tu2right;
-            model_[index].tv = tv2top;
-            //model_[index].nx = depth_map_[index2].nx;
-            //model_[index].ny = depth_map_[index2].ny;
-            //model_[index].nz = depth_map_[index2].nz;
+            model_[index].tu = 1.0f;
+            model_[index].tv = 0.0f;
+            model_[index].nx = depth_map_[index2].nx;
+            model_[index].ny = depth_map_[index2].ny;
+            model_[index].nz = depth_map_[index2].nz;
             model_[index].r = depth_map_[index2].r;
             model_[index].g = depth_map_[index2].g;
             model_[index].b = depth_map_[index2].b;
+            model_[index].tu2 = tu2right;
+            model_[index].tv2 = tv2top;
             index++;
 
             model_[index].x = depth_map_[index3].x;
             model_[index].y = depth_map_[index3].y;
             model_[index].z = depth_map_[index3].z;
-            model_[index].tu = tu2left;
-            model_[index].tv = tv2bottom;
-           // model_[index].nx = depth_map_[index3].nx;
-          //  model_[index].ny = depth_map_[index3].ny;
-          //  model_[index].nz = depth_map_[index3].nz;
+            model_[index].tu = 0.0f;
+            model_[index].tv = 1.0f;
+            model_[index].nx = depth_map_[index3].nx;
+            model_[index].ny = depth_map_[index3].ny;
+            model_[index].nz = depth_map_[index3].nz;
             model_[index].r = depth_map_[index3].r;
             model_[index].g = depth_map_[index3].g;
             model_[index].b = depth_map_[index3].b;
+            model_[index].tu2 = tu2left;
+            model_[index].tv2 = tv2bottom;
             index++;
 
             model_[index].x = depth_map_[index3].x;
             model_[index].y = depth_map_[index3].y;
             model_[index].z = depth_map_[index3].z;
-            model_[index].tu = tu2left;
-            model_[index].tv = tv2bottom;
-          //  model_[index].nx = depth_map_[index3].nx;
-          //  model_[index].ny = depth_map_[index3].ny;
-          //  model_[index].nz = depth_map_[index3].nz;
+            model_[index].tu = 0.0f;
+            model_[index].tv = 1.0f;
+            model_[index].nx = depth_map_[index3].nx;
+            model_[index].ny = depth_map_[index3].ny;
+            model_[index].nz = depth_map_[index3].nz;
             model_[index].r = depth_map_[index3].r;
             model_[index].g = depth_map_[index3].g;
             model_[index].b = depth_map_[index3].b;
+            model_[index].tu2 = tu2left;
+            model_[index].tv2 = tv2bottom;
             index++;
 
             model_[index].x = depth_map_[index2].x;
             model_[index].y = depth_map_[index2].y;
             model_[index].z = depth_map_[index2].z;
-            model_[index].tu = tu2right;
-            model_[index].tv = tv2top;
-           // model_[index].nx = depth_map_[index2].nx;
-           // model_[index].ny = depth_map_[index2].ny;
-           // model_[index].nz = depth_map_[index2].nz;
+            model_[index].tu = 1.0f;
+            model_[index].tv = 0.0f;
+            model_[index].nx = depth_map_[index2].nx;
+            model_[index].ny = depth_map_[index2].ny;
+            model_[index].nz = depth_map_[index2].nz;
             model_[index].r = depth_map_[index2].r;
             model_[index].g = depth_map_[index2].g;
             model_[index].b = depth_map_[index2].b;
+            model_[index].tu2 = tu2right;
+            model_[index].tv2 = tv2top;
             index++;
 
             model_[index].x = depth_map_[index4].x;
             model_[index].y = depth_map_[index4].y;
             model_[index].z = depth_map_[index4].z;
-            model_[index].tu = tu2right;
-            model_[index].tv = tv2bottom;
-          //  model_[index].nx = depth_map_[index4].nx;
-         //   model_[index].ny = depth_map_[index4].ny;
-         //   model_[index].nz = depth_map_[index4].nz;
+            model_[index].tu = 1.0f;
+            model_[index].tv = 1.0f;
+            model_[index].nx = depth_map_[index4].nx;
+            model_[index].ny = depth_map_[index4].ny;
+            model_[index].nz = depth_map_[index4].nz;
             model_[index].r = depth_map_[index4].r;
             model_[index].g = depth_map_[index4].g;
             model_[index].b = depth_map_[index4].b;
-            index++;         
+            model_[index].tu2 = tu2right;
+            model_[index].tv2 = tv2bottom;
+            index++;       
+
+            tu2left += increment_size_width;
+            tu2right += increment_size_width;
+            if (tu2right > 1.0f)
+            {
+                tu2left = 0.0f;
+                tu2right = increment_size_width;
+            }
         }
-        
+
+        tv2top += increment_size_height;
+        tv2bottom += increment_size_height;
+        if (tv2bottom > 1.0f)
+        {
+            tv2top = 0.0f;
+            tv2bottom = increment_size_height;
+        }
     }
     return true;
 }
@@ -454,6 +486,113 @@ void DepthFusionClass::Shutdown_model()
 //TODO: future
 void DepthFusionClass::Calculate_vectors()
 {
+    int face_count, i, index;
+    TEMP_VERTEX_TYPE vertex1, vertex2, vertex3;
+    VECTOR_TYPE tangent, binormal;
+
+    face_count = vertex_count_ / 3;
+    index = 0;
+
+    for (i = 0; i < face_count; i++)
+    {
+        vertex1.x = model_[index].x;
+        vertex1.y = model_[index].y;
+        vertex1.z = model_[index].z;
+        vertex1.tu = model_[index].tu;
+        vertex1.tv = model_[index].tv;
+        vertex1.nx = model_[index].nx;
+        vertex1.ny = model_[index].ny;
+        vertex1.nz = model_[index].nz;
+        index++;
+
+        vertex2.x = model_[index].x;
+        vertex2.y = model_[index].y;
+        vertex2.z = model_[index].z;
+        vertex2.tu = model_[index].tu;
+        vertex2.tv = model_[index].tv;
+        vertex2.nx = model_[index].nx;
+        vertex2.ny = model_[index].ny;
+        vertex2.nz = model_[index].nz;
+        index++;
+
+        vertex3.x = model_[index].x;
+        vertex3.y = model_[index].y;
+        vertex3.z = model_[index].z;
+        vertex3.tu = model_[index].tu;
+        vertex3.tv = model_[index].tv;
+        vertex3.nx = model_[index].nx;
+        vertex3.ny = model_[index].ny;
+        vertex3.nz = model_[index].nz;
+        index++;
+
+        Calculate_tangent_binormal(vertex1, vertex2, vertex3, tangent, binormal);
+
+        model_[index - 1].tx = tangent.x;
+        model_[index - 1].ty = tangent.y;
+        model_[index - 1].tz = tangent.z;
+        model_[index - 1].bx = binormal.x;
+        model_[index - 1].by = binormal.y;
+        model_[index - 1].bz = binormal.z;
+
+        model_[index - 2].tx = tangent.x;
+        model_[index - 2].ty = tangent.y;
+        model_[index - 2].tz = tangent.z;
+        model_[index - 2].bx = binormal.x;
+        model_[index - 2].by = binormal.y;
+        model_[index - 2].bz = binormal.z;
+
+        model_[index - 3].tx = tangent.x;
+        model_[index - 3].ty = tangent.y;
+        model_[index - 3].tz = tangent.z;
+        model_[index - 3].bx = binormal.x;
+        model_[index - 3].by = binormal.y;
+        model_[index - 3].bz = binormal.z;
+    }
+}
+
+void DepthFusionClass::Calculate_tangent_binormal(TEMP_VERTEX_TYPE vertex1, TEMP_VERTEX_TYPE vertex2, TEMP_VERTEX_TYPE vertex3, VECTOR_TYPE& tangent, VECTOR_TYPE& binormal)
+{
+    float vector1[3], vector2[3];
+    float tu_vector[2], tv_vector[2];
+    float den;
+    float length;
+
+    vector1[0] = vertex2.x - vertex1.x;
+    vector1[1] = vertex2.y - vertex1.y;
+    vector1[2] = vertex2.z - vertex1.z;
+
+    vector2[0] = vertex3.x - vertex1.x;
+    vector2[1] = vertex3.y - vertex1.y;
+    vector2[2] = vertex3.z - vertex1.z;
+
+    tu_vector[0] = vertex2.tu - vertex1.tu;
+    tv_vector[0] = vertex2.tv - vertex1.tv;
+
+    tu_vector[1] = vertex3.tu - vertex1.tu;
+    tv_vector[1] = vertex3.tv - vertex1.tv;
+
+    den = 1.0f / (tu_vector[0] * tv_vector[1] - tu_vector[1] * tv_vector[0]);
+
+    tangent.x = (tv_vector[1] * vector1[0] - tv_vector[0] * vector2[0]) * den;
+    tangent.y = (tv_vector[1] * vector1[1] - tv_vector[0] * vector2[1]) * den;
+    tangent.z = (tv_vector[1] * vector1[2] - tv_vector[0] * vector2[2]) * den;
+
+    binormal.x = (tu_vector[0] * vector2[0] - tu_vector[1] * vector1[0]) * den;
+    binormal.y = (tu_vector[0] * vector2[1] - tu_vector[1] * vector1[1]) * den;
+    binormal.x = (tu_vector[0] * vector2[2] - tu_vector[1] * vector1[2]) * den;
+
+    length = (float)sqrt((tangent.x * tangent.x) + (tangent.y * tangent.y) + (tangent.z * tangent.z));
+
+    tangent.x = tangent.x / length;
+    tangent.y = tangent.y / length;
+    tangent.z = tangent.z / length;
+
+    length = (float)sqrt((binormal.x * binormal.x) + (binormal.y * binormal.y) + (binormal.z * binormal.z));
+
+    binormal.x = binormal.x / length;
+    binormal.y = binormal.y / length;
+    binormal.z = binormal.z / length;
+
 }
 
 void DepthFusionClass::Render_buffers(ID3D11DeviceContext* device_context)
@@ -492,7 +631,11 @@ bool DepthFusionClass::Initialize_buffers(ID3D11Device* device)
     {
         vertices[i].position = XMFLOAT3(model_[i].x, model_[i].y, model_[i].z);
         vertices[i].color = XMFLOAT3(model_[i].r, model_[i].g, model_[i].b);
-        //vertices[i].texture = XMFLOAT2(model_[i].tu, model_[i].tv);
+        vertices[i].texture = XMFLOAT2(model_[i].tu, model_[i].tv);
+        vertices[i].normal = XMFLOAT3(model_[i].nx, model_[i].ny, model_[i].nz);
+        vertices[i].tangent = XMFLOAT3(model_[i].tx, model_[i].ty, model_[i].tz);
+        vertices[i].binormal = XMFLOAT3(model_[i].bx, model_[i].by, model_[i].bz);
+        vertices[i].texture2 = XMFLOAT2(model_[i].tu2, model_[i].tv2);
         indices[i] = i;
     }
 

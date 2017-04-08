@@ -51,7 +51,7 @@ bool ColorShaderClass::Initialize_shader(ID3D11Device* device, HWND hwnd, WCHAR*
     ID3D10Blob* error_message;
     ID3D10Blob* vertex_shader_buffer;
     ID3D10Blob* pixel_shader_buffer;
-    D3D11_INPUT_ELEMENT_DESC polygon_layout[3];
+    D3D11_INPUT_ELEMENT_DESC polygon_layout[7];
     unsigned int num_elements;
     D3D11_BUFFER_DESC matrix_buffer_desc;
     D3D11_BUFFER_DESC  light_buffer_desc;
@@ -114,6 +114,39 @@ bool ColorShaderClass::Initialize_shader(ID3D11Device* device, HWND hwnd, WCHAR*
     polygon_layout[2].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
     polygon_layout[2].InstanceDataStepRate = 0;
 
+    polygon_layout[3].SemanticName = "NORMAL";
+    polygon_layout[3].SemanticIndex = 0;
+    polygon_layout[3].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+    polygon_layout[3].InputSlot = 0;
+    polygon_layout[3].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+    polygon_layout[3].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+    polygon_layout[3].InstanceDataStepRate = 0;
+
+    polygon_layout[4].SemanticName = "TANGENT";
+    polygon_layout[4].SemanticIndex = 0;
+    polygon_layout[4].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+    polygon_layout[4].InputSlot = 0;
+    polygon_layout[4].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+    polygon_layout[4].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+    polygon_layout[4].InstanceDataStepRate = 0;
+
+    polygon_layout[5].SemanticName = "BINORMAL";
+    polygon_layout[5].SemanticIndex = 0;
+    polygon_layout[5].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+    polygon_layout[5].InputSlot = 0;
+    polygon_layout[5].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+    polygon_layout[5].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+    polygon_layout[5].InstanceDataStepRate = 0;
+
+
+    polygon_layout[6].SemanticName = "TEXCOORD";
+    polygon_layout[6].SemanticIndex = 1;
+    polygon_layout[6].Format = DXGI_FORMAT_R32G32_FLOAT;
+    polygon_layout[6].InputSlot = 0;
+    polygon_layout[6].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+    polygon_layout[6].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+    polygon_layout[6].InstanceDataStepRate = 0;
+    
     num_elements = sizeof(polygon_layout) / sizeof(polygon_layout[0]);
 
     result = device->CreateInputLayout(polygon_layout, num_elements, vertex_shader_buffer->GetBufferPointer(), vertex_shader_buffer->GetBufferSize(), &layout_);
@@ -268,6 +301,7 @@ void ColorShaderClass::Render_shader(ID3D11DeviceContext* device_context, int in
  device_context->IASetInputLayout(layout_);
 
  //vertex and pixel shader that ll be used to render 
+ device_context->PSSetSamplers(0, 1, &sample_state_);
  device_context->VSSetShader(vertex_shader_, nullptr, 0);
  device_context->PSSetShader(pixel_shader_, nullptr, 0);
 
