@@ -25,6 +25,7 @@ public:
     void Key_down(unsigned int);
     void Key_up(unsigned int);
     void Get_mouse_location(int&, int&);
+    void Set_default_mouse_location();
     bool Is_left_mouse_button_down();
 
     bool Is_key_down(unsigned int);

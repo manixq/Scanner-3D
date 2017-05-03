@@ -25,6 +25,9 @@ public:
  void Turn_up(bool);
  void Turn_down(bool);
 
+ void Turn_x(int);
+ void Turn_y(int);
+
  void Go_up(bool);
  void Go_down(bool);
  void Go_left(bool);

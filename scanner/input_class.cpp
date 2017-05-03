@@ -23,8 +23,8 @@ bool InputClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screen_width, in
     screen_width_ = screen_width;
     screen_height_ = screen_height;
 
-    mouse_x_ = 0;
-    mouse_y_ = 0;
+    mouse_x_ = screen_width / 2;
+    mouse_y_ = screen_height / 2;
 
     int i;
     for (i = 0; i < 256; i++)
@@ -76,7 +76,6 @@ bool InputClass::Frame()
     result = Read_mouse();
     if (!result)
         return false;
-
     Process_input();
     return true;
 }
@@ -95,6 +94,12 @@ void InputClass::Get_mouse_location(int &mouse_x, int &mouse_y)
 {
     mouse_x = mouse_x_;
     mouse_y = mouse_y_;
+}
+
+void InputClass::Set_default_mouse_location()
+{
+    mouse_x_ = screen_width_ / 2;
+    mouse_y_ = screen_height_ / 2;
 }
 
 bool InputClass::Is_left_mouse_button_down()

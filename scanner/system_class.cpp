@@ -162,6 +162,9 @@ bool SystemClass::Frame()
     bool lmb;
     int mouse_x, mouse_y;
 
+    int old_mouse_x;
+    int old_mouse_y;
+
     //escape? no.
     result = input_->Frame();
     if (!result)
@@ -172,7 +175,8 @@ bool SystemClass::Frame()
 
     input_->Get_mouse_location(mouse_x, mouse_y);
     lmb = input_->Is_left_mouse_button_down();
-
+    input_->Set_default_mouse_location();
+    input_->Get_mouse_location(old_mouse_x, old_mouse_y);
     timer_->Frame();
 
     position_->Set_frame_time(timer_->Get_time());
@@ -180,6 +184,8 @@ bool SystemClass::Frame()
     position_->Turn_down(input_->Is_key_down(VK_DOWN));
     position_->Turn_left(input_->Is_key_down(VK_LEFT));
     position_->Turn_right(input_->Is_key_down(VK_RIGHT));
+    position_->Turn_y(old_mouse_x - mouse_x);
+    position_->Turn_x(old_mouse_y - mouse_y);
     position_->Go_up(input_->Is_key_down('W'));
     position_->Go_down(input_->Is_key_down('S'));
     position_->Go_left(input_->Is_key_down('A'));
