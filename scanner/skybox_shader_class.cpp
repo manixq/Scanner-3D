@@ -300,6 +300,8 @@ void SkyboxShaderClass::Render_shader(ID3D11DeviceContext* device_context, int i
     //set vs and ps that ll be used to render
     device_context->PSSetSamplers(0, 1, &sample_state_);
     device_context->VSSetShader(vertex_shader_, nullptr, 0);
+    device_context->HSSetShader(nullptr, nullptr, 0);
+    device_context->DSSetShader(nullptr, nullptr, 0);
     device_context->PSSetShader(pixel_shader_, nullptr, 0);
 
 

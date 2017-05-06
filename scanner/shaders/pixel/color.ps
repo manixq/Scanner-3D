@@ -39,10 +39,7 @@ float4 Color_pixel_shader(PIXEL_INPUT_TYPE input) : SV_TARGET
     normal_ = (normals.x * input.tangent) + (normals.y * input.binormal) + (normals.z * input.normal);
     normal_ = normalize(normal_);
     light_intensity = saturate(dot(normal_.xyz, light_dir));
-    
-    if ((input.color.x + input.color.y + input.color.z) <= 0.00001f)
-        color.w = 0.0f;
-
+   
     color.xyz = saturate(input.color.xyz * 0.2f);
     if (light_intensity > 0.2f)
         color.xyz = saturate(input.color.xyz * light_intensity);

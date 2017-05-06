@@ -153,10 +153,10 @@ bool ShaderManagerClass::Render_texture_shader(ID3D11DeviceContext* device, int 
     return true;
 }
 
-bool ShaderManagerClass::Render_color_shader(ID3D11DeviceContext* device, int index_count, D3DXMATRIX world, D3DXMATRIX view, D3DXMATRIX projection, ID3D11ShaderResourceView* normal, D3DXVECTOR3 light_direction)
+bool ShaderManagerClass::Render_color_shader(ID3D11DeviceContext* device, int index_count, D3DXMATRIX world, D3DXMATRIX view, D3DXMATRIX projection, float tessellation_amount, ID3D11ShaderResourceView* disp, ID3D11ShaderResourceView* normal, D3DXVECTOR3 light_direction)
 {
     bool result;
-    result = color_shader_->Render(device, index_count, world, view, projection, normal, light_direction);
+    result = color_shader_->Render(device, index_count, world, view, projection, tessellation_amount, disp, normal, light_direction);
     if (!result)
         return false;
     return true;

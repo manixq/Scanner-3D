@@ -214,6 +214,8 @@
     <ClInclude Include="headers\timer_class.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="shaders\domain\color.ds" />
+    <None Include="shaders\hull\color.hs" />
     <None Include="shaders\pixel\color.ps" />
     <None Include="shaders\pixel\deferred.ps" />
     <None Include="shaders\pixel\font.ps" />

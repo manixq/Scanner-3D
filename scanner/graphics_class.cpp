@@ -86,7 +86,7 @@ bool GraphicsClass::Initialize(int screen_width, int screen_height, HWND hwnd)
     texture_manager_ = new TextureManagerClass;
     if (!texture_manager_)
         return false;
-    result = texture_manager_->Initialize(6);
+    result = texture_manager_->Initialize(7);
     if (!result)
         return false;
     texture_manager_->Load_texture(d3d_->GetDevice(), L"data/dirt01d.dds", 0);
@@ -95,6 +95,7 @@ bool GraphicsClass::Initialize(int screen_width, int screen_height, HWND hwnd)
     texture_manager_->Load_texture(d3d_->GetDevice(), L"data/perturb001.dds", 3);
     texture_manager_->Load_texture(d3d_->GetDevice(), L"data/cloud001.dds", 4);
     texture_manager_->Load_texture(d3d_->GetDevice(), L"data/depth_fusion/normal.dds", 5);
+    texture_manager_->Load_texture(d3d_->GetDevice(), L"data/depth_fusion/disp.dds", 6);
 
     skybox_ = new SkyBoxClass;
     if (!skybox_)
@@ -444,11 +445,12 @@ bool GraphicsClass::Render_scene()
     }
     d3d_->GetWorldMatrix(world_matrix);
     D3DXMatrixRotationY(&world_matrix, -180);
+
     //depth object
     d3d_->TurnOnAlphaBlending();
     d3d_->Turn_culling_off();
     object_2d3d_->Render(d3d_->GetDeviceContext());
-    result = shader_manager_->Render_color_shader(d3d_->GetDeviceContext(), object_2d3d_->Get_index_count(), world_matrix, view_matrix, projection_matrix, texture_manager_->Get_texture(5), light_dir);
+    result = shader_manager_->Render_color_shader(d3d_->GetDeviceContext(), object_2d3d_->Get_index_count(), world_matrix, view_matrix, projection_matrix, 3.0f, texture_manager_->Get_texture(6),texture_manager_->Get_texture(5), light_dir);
     if (!result)
         return false;
     d3d_->TurnOffAlphaBlending();
@@ -466,7 +468,7 @@ bool GraphicsClass::Render2d_texture_scene()
     D3DXMATRIX world_matrix, view_matrix, ortho_matrix;
     bool result;
 
-    d3d_->Begin_scene(1.0f, 0.0f, 0.0f, 0.0f);
+    d3d_->Begin_scene(1.0f, 0.0f, 0.0f, 1.0f);
     camera_->Render();
     camera_->Get_static_view_matrix(view_matrix);
     d3d_->GetWorldMatrix(world_matrix);
@@ -479,6 +481,7 @@ bool GraphicsClass::Render2d_texture_scene()
         return false;
 
     d3d_->Turn_zbuffer_on();
+   
     d3d_->End_scene();
     return true;
 }

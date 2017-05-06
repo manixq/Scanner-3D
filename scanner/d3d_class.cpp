@@ -161,7 +161,7 @@ bool D3DClass::Initialize(int screen_width, int screen_height, bool vsync, HWND 
   nullptr,
   D3D_DRIVER_TYPE_HARDWARE,
   nullptr,
-  0,
+  D3D11_CREATE_DEVICE_DEBUG,
   &feature_level,
   1,
   D3D11_SDK_VERSION,
@@ -278,6 +278,7 @@ bool D3DClass::Initialize(int screen_width, int screen_height, bool vsync, HWND 
  device_context_->RSSetState(raster_state_);
 
  raster_desc.CullMode = D3D11_CULL_NONE;
+
  result = device_->CreateRasterizerState(&raster_desc, &raster_state_no_culling_);
  if (FAILED(result))
      return false;

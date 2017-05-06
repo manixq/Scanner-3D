@@ -243,6 +243,8 @@ void TextureShaderClass::Render_shader(ID3D11DeviceContext* device_context, int 
 
  //set vs and ps that ll be used to render
  device_context->VSSetShader(vertex_shader_, nullptr, 0);
+ device_context->HSSetShader(nullptr, nullptr, 0);
+ device_context->DSSetShader(nullptr, nullptr, 0);
  device_context->PSSetShader(pixel_shader_, nullptr, 0);
 
  //set sampler state in ps

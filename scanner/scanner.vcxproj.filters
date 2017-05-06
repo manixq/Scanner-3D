@@ -22,6 +22,12 @@
     <Filter Include="Resource Files\shaders\pixel">
       <UniqueIdentifier>{74e23447-c23f-4712-ae01-0bfc259a3533}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\shaders\hull">
+      <UniqueIdentifier>{95dd2ac9-33b3-440c-9ab6-9b31bf25a632}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\shaders\domain">
+      <UniqueIdentifier>{0f399481-d4c7-4db0-b855-42d2b5e343ad}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bitmap_class.cpp">
@@ -249,6 +255,12 @@
     </None>
     <None Include="shaders\vertex\color.vs">
       <Filter>Resource Files\shaders\vertex</Filter>
+    </None>
+    <None Include="shaders\hull\color.hs">
+      <Filter>Resource Files\shaders\hull</Filter>
+    </None>
+    <None Include="shaders\domain\color.ds">
+      <Filter>Resource Files\shaders\domain</Filter>
     </None>
   </ItemGroup>
 </Project>

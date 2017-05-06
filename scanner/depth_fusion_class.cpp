@@ -219,12 +219,12 @@ void DepthFusionClass::Set_coordinates()
             depth_map_[index].x = -(float)i / 50.0f;
             depth_map_[index].y = -(float)j / 50.0f;
             depth_map_[index].y += 50.0f;
-            if(index > 6 && index < (model_width_ - 1) * (model_height_ - 1) + model_width_ - 1 - 6)
+            /*if(index > 6 && index < (model_width_ - 1) * (model_height_ - 1) + model_width_ - 1 - 6)
             {
                depth_map_[index].z = ((depth_map_[index - 6].z + 20.0f) * 10.0f * 0.5f + depth_map_[index].z + depth_map_[index + 6].z * 0.5f) / 2.0f;
             }
-            depth_map_[index].z /= 10.0f;
-            depth_map_[index].z -= 20.0f;
+            depth_map_[index].z /= 10.0f;*/
+            depth_map_[index].z = -20.0f;
         }
     }
 }
@@ -604,7 +604,9 @@ void DepthFusionClass::Render_buffers(ID3D11DeviceContext* device_context)
     offset = 0;
     device_context->IASetVertexBuffers(0, 1, &vertex_buffer_, &stride, &offset);
     device_context->IASetIndexBuffer(index_buffer_, DXGI_FORMAT_R32_UINT, 0);
-    device_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+    device_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
+    //device_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 bool DepthFusionClass::Initialize_buffers(ID3D11Device* device)

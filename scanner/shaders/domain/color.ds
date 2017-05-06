@@ -1,0 +1,76 @@
+Texture2D displacement_texture : register(t0);
+SamplerState sample : register(s0);
+
+cbuffer MatrixBuffer
+{
+    matrix worldMatrix;
+    matrix viewMatrix;
+    matrix projectionMatrix;
+};
+
+struct ConstantOutputType
+{
+    float edges[3] : SV_TessFactor;
+    float inside : SV_InsideTessFactor;
+};
+
+struct HULL_OUTPUT_TYPE
+{
+    float4 position : SV_POSITION;
+    float4 color : COLOR;
+    float2 tex : TEXCOORD0;
+    float3 normal : NORMAL;
+    float3 tangent : TANGENT;
+    float3 binormal : BINORMAL;
+    float2 tex2 : TEXCOORD1;
+};
+
+struct PIXEL_INPUT_TYPE
+{
+    float4 position : SV_POSITION;
+    float4 color : COLOR;
+    float2 tex : TEXCOORD0;
+    float3 normal : NORMAL;
+    float3 tangent : TANGENT;
+    float3 binormal : BINORMAL;
+    float2 tex2 : TEXCOORD1;
+};
+
+[domain("tri")]
+PIXEL_INPUT_TYPE ColorDomainShader(ConstantOutputType input, float3 uvwCoord : SV_DomainLocation, const OutputPatch<HULL_OUTPUT_TYPE, 3> patch)
+{
+    float3 vertex_position;
+    PIXEL_INPUT_TYPE output;
+
+
+    output.color = patch[0].color;
+    output.tex = patch[0].tex;
+    output.tex2 = patch[0].tex2;
+
+    output.normal = mul(patch[0].normal, (float3x3) worldMatrix);
+    output.normal = normalize(output.normal);
+
+    output.tangent = mul(patch[0].tangent, (float3x3) worldMatrix);
+    output.tangent = normalize(output.tangent);
+
+    output.binormal = mul(patch[0].binormal, (float3x3) worldMatrix);
+    output.binormal = normalize(output.binormal);
+
+    float4 displacement_tex = displacement_texture.SampleLevel(sample, float2(-output.tex2.y / 20, output.tex2.x), 0);
+    float displacement = displacement_tex.x;
+    displacement *= 10;
+    displacement += 10;
+    float3 direction = output.normal;
+
+    vertex_position = uvwCoord.x * patch[0].position + uvwCoord.y * patch[1].position + uvwCoord.z * patch[2].position;
+
+    vertex_position += direction * displacement;
+
+    output.position = mul(float4(vertex_position.xyz, 1.0f), worldMatrix);
+    output.position = mul(output.position, viewMatrix);
+    output.position = mul(output.position, projectionMatrix);
+
+    
+
+    return output;
+}

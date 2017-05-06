@@ -333,6 +333,8 @@ void TerrainShaderClass::Render_shader(ID3D11DeviceContext* device_context, int 
     device_context->IASetInputLayout(layout_);
 
     device_context->VSSetShader(vertex_shader_, nullptr, 0);
+    device_context->HSSetShader(nullptr, nullptr, 0);
+    device_context->DSSetShader(nullptr, nullptr, 0);
     device_context->PSSetShader(pixel_shader_, nullptr, 0);
 
     device_context->PSSetSamplers(0, 1, &sample_state_clamp_);
